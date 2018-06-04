@@ -17,17 +17,56 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Threshold1"/>
+                <SeekBar
+                    android:id="@+id/seekBarThreshold1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:min="0"
+                    android:max="200"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Threshold2"/>
+                <SeekBar
+                    android:id="@+id/seekBarThreshold2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:min="0"
+                    android:max="200"/>
+            </LinearLayout>
+
             <org.opencv.android.JavaCameraView
                 android:id="@+id/HelloOpenCvView"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="150dp"
                 android:visibility="gone"
                 opencv:camera_id="front"
                 opencv:show_fps="true" />
 
             <android.support.v7.widget.AppCompatImageView
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="150dp"
+                android:src="@android:drawable/ic_delete"
+                android:id="@+id/ivFotogramaContornos"
+                android:clickable="false"
+                android:focusableInTouchMode="false"/>
+
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
                 android:src="@android:drawable/ic_delete"
                 android:id="@+id/ivFotogramaOriginal"
                 android:clickable="false"
