@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -30,7 +30,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:min="0"
-                    android:max="200"/>
+                    android:max="500"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -45,7 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:min="0"
-                    android:max="200"/>
+                    android:max="500"/>
             </LinearLayout>
 
             <org.opencv.android.JavaCameraView
@@ -54,8 +54,12 @@
                 android:layout_height="150dp"
                 android:visibility="gone"
                 opencv:camera_id="front"
-                opencv:show_fps="true" />
+                opencv:show_fps="true"/>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvArea"/>
             <android.support.v7.widget.AppCompatImageView
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
@@ -71,18 +75,17 @@
                 android:id="@+id/ivFotogramaOriginal"
                 android:clickable="false"
                 android:focusableInTouchMode="false"/>
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/floatingActionButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                opencv:srcCompat="@android:drawable/ic_menu_camera"
-                tools:layout_editor_absoluteX="327dp"
-                tools:layout_editor_absoluteY="454dp" />
-
         </LinearLayout>
     </ScrollView>
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fbPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            opencv:srcCompat="@android:drawable/ic_media_pause"
+            android:layout_gravity="bottom|end" />
 
-</android.support.constraint.ConstraintLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>
