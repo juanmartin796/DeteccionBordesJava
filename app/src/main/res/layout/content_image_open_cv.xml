@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ImageOpenCVActivity"
+    tools:showIn="@layout/activity_image_open_cv">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Threshold1" />
+
+                <SeekBar
+                    android:id="@+id/seekBarThreshold1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="500"
+                    android:min="0"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Threshold2" />
+                <SeekBar
+                    android:id="@+id/seekBarThreshold2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="500"
+                    android:min="0"/>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imgOriginal"
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"/>
+
+            <ImageView
+                android:id="@+id/imgBordes"
+                android:layout_width="wrap_content"
+                android:layout_height="150dp" />
+
+            <ImageView
+                android:id="@+id/imgContornos"
+                android:layout_width="wrap_content"
+                android:layout_height="150dp" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
