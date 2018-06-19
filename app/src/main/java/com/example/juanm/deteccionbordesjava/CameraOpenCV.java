@@ -2,6 +2,7 @@ package com.example.juanm.deteccionbordesjava;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.graphics.Camera;
 import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -31,11 +32,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+
 public class CameraOpenCV extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
     private CameraBridgeViewBase mOpenCvCameraView;
     private ImageView ivFotogramaOriginal, ivFotogramaContornos;
     private SeekBar sbCanny, sbCanny2;
-    int theshold1, theshold2;
+    int theshold1 = 200, theshold2 = 200;
     private TextView tvArea;
     private FloatingActionButton fabPause;
 
@@ -122,6 +124,7 @@ public class CameraOpenCV extends AppCompatActivity implements CameraBridgeViewB
 
     @Override
     public void onCameraViewStarted(int width, int height) {
+
     }
 
     @Override

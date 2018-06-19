@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.juanm.deteccionbordesjava.Util.Util;
@@ -29,11 +30,16 @@ import org.opencv.imgproc.Imgproc;
 public class ImageOpenCVActivity extends AppCompatActivity {
     private int RESULT_LOAD_IMG = 1;
     private String imgDecodableString;
-    private ImageView imgOriginal, imgBordes, imgContornos;
-    private SeekBar seekBarThreshold1, seekBarThreshold2;
-    public int threshold1, threshold2;
+    private ImageView imgOriginal, imgBordes, imgContornos, imgThreshold;
+    private SeekBar seekBarThreshold1, seekBarThreshold2, seekBarThresholdProc;
+    public int threshold1 = 200, threshold2 = 200, thresholdProc = 45;
+    private Bitmap bitmapOriginal;
+    private TextView tvResultados;
     FloatingActionButton fabProcesar;
     Bitmap bitmap= null;
+    Mat matOriginal;
+    Long startTime, endTime;
+    private String textoResultados= "";
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -60,10 +66,13 @@ public class ImageOpenCVActivity extends AppCompatActivity {
 
         seekBarThreshold1 = findViewById(R.id.seekBarThreshold1);
         seekBarThreshold2 = findViewById(R.id.seekBarThreshold2);
+        seekBarThresholdProc = findViewById(R.id.seekBarThresholdProc);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fabProcesar = findViewById(R.id.fabProcesar);
         imgBordes = findViewById(R.id.imgBordes);
         imgContornos = findViewById(R.id.imgContornos);
+        imgThreshold= findViewById(R.id.imgThreshold);
+        tvResultados = findViewById(R.id.tvResultados);
 
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -77,22 +86,21 @@ public class ImageOpenCVActivity extends AppCompatActivity {
         fabProcesar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Mat matImage = new Mat();
-                Utils.bitmapToMat(BitmapFactory.decodeFile(imgDecodableString), matImage);
-                //cargarMatEnImageView(obtenerBordes(matImage), imgView);
-                Mat matBordes = Util.obtenerBordes(matImage, threshold1, threshold2);
-                Util.cargarMatEnImageView(matBordes, imgBordes, ImageOpenCVActivity.this);
+                textoResultados="";
+                crearBordes();
+                crearContornos();
+                tvResultados.setText(textoResultados);
             }
         });
 
         seekBarThreshold1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textoResultados="";
                 threshold1 = progress;
-                Mat matImage = new Mat();
-                Utils.bitmapToMat(BitmapFactory.decodeFile(imgDecodableString), matImage);
-                Mat matBordes = Util.obtenerBordes(matImage, threshold1, threshold2);
-                Util.cargarMatEnImageView(matBordes, imgBordes, ImageOpenCVActivity.this);
+                crearBordes();
+                crearContornos();
+                tvResultados.setText(textoResultados);
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) { }
@@ -103,11 +111,11 @@ public class ImageOpenCVActivity extends AppCompatActivity {
         seekBarThreshold2.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textoResultados="";
                 threshold2 = progress;
-                Mat matImage = new Mat();
-                Utils.bitmapToMat(BitmapFactory.decodeFile(imgDecodableString), matImage);
-                Mat matBordes = Util.obtenerBordes(matImage, threshold1, threshold2);
-                Util.cargarMatEnImageView(matBordes, imgBordes, ImageOpenCVActivity.this);
+                crearBordes();
+                crearContornos();
+                tvResultados.setText(textoResultados);
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {}
@@ -115,7 +123,74 @@ public class ImageOpenCVActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
+        seekBarThresholdProc.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textoResultados="";
+                thresholdProc = progress;
+                crearBordes();
+                crearContornos();
+                tvResultados.setText(textoResultados);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, this, mLoaderCallback);
+    }
+
+    private void crearBordes() {
+        startTime();
+        Mat matImage = new Mat();
+        Utils.bitmapToMat(BitmapFactory.decodeFile(imgDecodableString), matImage);
+        Mat matBordes = Util.obtenerBordes(matImage, threshold1, threshold2);
+        endTime();
+        textoResultados += "\nProc bordes: "+ getTiempoRecorrido() +" mm";
+
+        startTime();
+        Util.cargarMatEnImageView(matBordes, imgBordes, ImageOpenCVActivity.this);
+        endTime();
+        textoResultados+= "\nDibujar bordes: "+ getTiempoRecorrido() + " mm";
+    }
+
+    private void crearContornos() {
+        startTime();
+        Mat tmpGray = new Mat (matOriginal.width(), matOriginal.height(), CvType.CV_8UC1);
+        Imgproc.cvtColor(matOriginal, tmpGray, Imgproc.COLOR_RGB2GRAY);
+
+        Imgproc.threshold(tmpGray, tmpGray, thresholdProc, 255, Imgproc.THRESH_BINARY);
+
+        //Util.cargarMatEnImageView(tmpGray, imgThreshold, ImageOpenCVActivity.this); //HABILITAR SI SE QUIERE VER EL FRAME COMO QUEDA
+
+        Mat matContornos = Util.obtenerContornos(tmpGray, matOriginal);
+        endTime();
+        textoResultados+= "\nProc contornos: "+ getTiempoRecorrido() +" mm";
+
+        startTime();
+        Util.cargarMatEnImageView(matContornos, imgContornos, ImageOpenCVActivity.this);
+        endTime();
+        textoResultados += "\nDibubar contornos: " + getTiempoRecorrido() + " mm";
+        textoResultados+= Util.getResultados();
+    }
+
+    private void startTime(){
+        startTime = System.currentTimeMillis();
+    }
+
+    private void endTime(){
+        endTime= System.currentTimeMillis();
+    }
+
+    private long getTiempoRecorrido(){
+        return startTime - endTime;
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -140,8 +215,10 @@ public class ImageOpenCVActivity extends AppCompatActivity {
                 cursor.close();
                 imgOriginal = (ImageView) findViewById(R.id.imgOriginal);
                 // Set the Image in ImageView after decoding the String
-                imgOriginal.setImageBitmap(BitmapFactory
-                        .decodeFile(imgDecodableString));
+                bitmapOriginal = BitmapFactory.decodeFile(imgDecodableString);
+                matOriginal = new Mat();
+                Utils.bitmapToMat(bitmapOriginal, matOriginal);
+                imgOriginal.setImageBitmap(bitmapOriginal);
                 fabProcesar.setVisibility(View.VISIBLE);
             } else {
                 Toast.makeText(this, "You haven't picked Image",
