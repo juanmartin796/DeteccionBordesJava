@@ -1,5 +1,6 @@
 package com.example.juanm.deteccionbordesjava;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -27,6 +28,13 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+
 public class ImageOpenCVActivity extends AppCompatActivity {
     private int RESULT_LOAD_IMG = 1;
     private String imgDecodableString;
@@ -40,6 +48,7 @@ public class ImageOpenCVActivity extends AppCompatActivity {
     Mat matOriginal;
     Long startTime, endTime;
     private String textoResultados= "";
+    private Mat matBordes;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -74,7 +83,6 @@ public class ImageOpenCVActivity extends AppCompatActivity {
         imgThreshold= findViewById(R.id.imgThreshold);
         tvResultados = findViewById(R.id.tvResultados);
 
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -90,17 +98,23 @@ public class ImageOpenCVActivity extends AppCompatActivity {
                 crearBordes();
                 crearContornos();
                 tvResultados.setText(textoResultados);
+                //escribirArchivo(getApplicationContext(), "tiempo.txt", textoResultados);
             }
         });
 
         seekBarThreshold1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                textoResultados="";
+                textoResultados ="";
                 threshold1 = progress;
+                textoResultados+= "\n\n" + imgDecodableString;
+                textoResultados+="\nThreshold1: "+ threshold1;
+                textoResultados+="\nThresholdProc: "+ thresholdProc;
+                textoResultados+="\nThreshold2: "+ threshold2;
                 crearBordes();
                 crearContornos();
                 tvResultados.setText(textoResultados);
+                //escribirArchivo(getApplicationContext(), "tiempo.txt", textoResultados);
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) { }
@@ -113,9 +127,14 @@ public class ImageOpenCVActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 textoResultados="";
                 threshold2 = progress;
+                textoResultados+= "\n\n" + imgDecodableString;
+                textoResultados+="\nThreshold1: "+ threshold1;
+                textoResultados+="\nThresholdProc: "+ thresholdProc;
+                textoResultados+="\nThreshold2: "+ threshold2;
                 crearBordes();
                 crearContornos();
                 tvResultados.setText(textoResultados);
+                //escribirArchivo(getApplicationContext(), "tiempo.txt", textoResultados);
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {}
@@ -128,9 +147,14 @@ public class ImageOpenCVActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 textoResultados="";
                 thresholdProc = progress;
+                textoResultados+= "\n\n" + imgDecodableString;
+                textoResultados+="\nThreshold1: "+ threshold1;
+                textoResultados+="\nThresholdProc: "+ thresholdProc;
+                textoResultados+="\nThreshold2: "+ threshold2;
                 crearBordes();
                 crearContornos();
                 tvResultados.setText(textoResultados);
+                //escribirArchivo(getApplicationContext(), "tiempo.txt", textoResultados);
             }
 
             @Override
@@ -151,7 +175,7 @@ public class ImageOpenCVActivity extends AppCompatActivity {
         startTime();
         Mat matImage = new Mat();
         Utils.bitmapToMat(BitmapFactory.decodeFile(imgDecodableString), matImage);
-        Mat matBordes = Util.obtenerBordes(matImage, threshold1, threshold2);
+        matBordes = Util.obtenerBordes(matImage, threshold1, threshold2);
         endTime();
         textoResultados += "\nProc bordes: "+ getTiempoRecorrido() +" mm";
 
@@ -166,11 +190,14 @@ public class ImageOpenCVActivity extends AppCompatActivity {
         Mat tmpGray = new Mat (matOriginal.width(), matOriginal.height(), CvType.CV_8UC1);
         Imgproc.cvtColor(matOriginal, tmpGray, Imgproc.COLOR_RGB2GRAY);
 
-        Imgproc.threshold(tmpGray, tmpGray, thresholdProc, 255, Imgproc.THRESH_BINARY);
+        //Imgproc.threshold(tmpGray, tmpGray, thresholdProc, 255, Imgproc.THRESH_BINARY);
+        Imgproc.threshold(tmpGray, tmpGray, thresholdProc, threshold1, Imgproc.THRESH_BINARY);
 
-        //Util.cargarMatEnImageView(tmpGray, imgThreshold, ImageOpenCVActivity.this); //HABILITAR SI SE QUIERE VER EL FRAME COMO QUEDA
+        Util.cargarMatEnImageView(tmpGray, imgThreshold, ImageOpenCVActivity.this); //HABILITAR SI SE QUIERE VER EL FRAME COMO QUEDA
 
-        Mat matContornos = Util.obtenerContornos(tmpGray, matOriginal);
+        Mat matContornos = Util.obtenerContornos(tmpGray, matOriginal); //HABILITAR SI SE QUIERE OBTENER LOS CORTORNOS UTILIZANDO EL THRESHOLD
+        //Mat matContornos = Util.obtenerContornos(matBordes, matOriginal);
+
         endTime();
         textoResultados+= "\nProc contornos: "+ getTiempoRecorrido() +" mm";
 
@@ -179,6 +206,39 @@ public class ImageOpenCVActivity extends AppCompatActivity {
         endTime();
         textoResultados += "\nDibubar contornos: " + getTiempoRecorrido() + " mm";
         textoResultados+= Util.getResultados();
+        escribirArchivo(getApplicationContext(), "tiempo.txt", textoResultados);
+    }
+
+    public void escribirArchivo(Context mcoContext,String sFileName, String sBody){
+        /*String filename = sFileName;
+        FileOutputStream outputStream;
+
+        try {
+            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream.write(sBody.getBytes());
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
+
+        File file = new File(mcoContext.getFilesDir(),"ArchivosGisia");
+        if(!file.exists()){
+            file.mkdir();
+        }
+
+        try{
+            File gpxfile = new File(file, sFileName);
+            //FileWriter writer = new FileWriter(gpxfile);
+            FileOutputStream writer = new FileOutputStream(gpxfile, true);
+
+            writer.write(sBody.getBytes());
+            writer.flush();
+            writer.close();
+
+        }catch (Exception e){
+            e.printStackTrace();
+
+        }
     }
 
     private void startTime(){

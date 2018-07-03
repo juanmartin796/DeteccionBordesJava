@@ -54,7 +54,7 @@ public class Util {
         }
         Mat matTmp= new Mat();
         matDstSobreCualDibujar.copyTo(matTmp);
-        Imgproc.drawContours(matTmp, contornos, maxIndex, new Scalar(255, 0, 0), 10);
+        Imgproc.drawContours(matTmp, contornos, -1, new Scalar(255, 0, 0), 1);
         return matTmp;
     }
 
