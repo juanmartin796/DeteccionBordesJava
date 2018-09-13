@@ -76,29 +76,80 @@
                     android:progress="200"/>
             </LinearLayout>
 
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/imgOriginal"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.5" />
+
+                <ImageView
+                    android:id="@+id/imgBordes"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintStart_toEndOf="@+id/imgOriginal"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.5"
+                    />
+            </android.support.constraint.ConstraintLayout>
+
+            <!--
             <ImageView
-                android:id="@+id/imgOriginal"
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"/>
+                android:id="@+id/imgContraste"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
 
             <ImageView
-                android:id="@+id/imgBordes"
-                android:layout_width="wrap_content"
+                android:id="@+id/imgContrasteTheshold"
+                android:layout_width="100dp"
                 android:layout_height="100dp" />
+
             <ImageView
-                android:id="@+id/imgThreshold"
-                android:layout_width="wrap_content"
-                android:layout_height="100dp" />
-            <ImageView
-                android:id="@+id/imgContornos"
-                android:layout_width="wrap_content"
-                android:layout_height="100dp" />
+                android:id="@+id/imgContrasteContorno"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />-->
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/imgContornos"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.5" />
+
+                <ImageView
+                    android:id="@+id/imgThreshold"
+                    android:layout_width="0dp"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintStart_toEndOf="@+id/imgContornos"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.5" />
+            </android.support.constraint.ConstraintLayout>
 
             <TextView
                 android:id="@+id/tvResultados"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TIEMPOS OBTENIDOS"/>
+                android:text="TIEMPOS OBTENIDOS"
+                android:visibility="gone"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

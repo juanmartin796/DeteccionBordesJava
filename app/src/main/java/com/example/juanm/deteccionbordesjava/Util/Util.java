@@ -2,6 +2,8 @@ package com.example.juanm.deteccionbordesjava.Util;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.widget.ImageView;
 
 import org.opencv.core.CvType;
@@ -12,6 +14,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +26,12 @@ public class Util {
     public static void cargarMatEnImageView(Mat mat, final ImageView imageView, Activity activity ){
         bitmap = bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
         org.opencv.android.Utils.matToBitmap(mat, bitmap);
+
+        /*ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG,50, stream);
+        byte[] byteArray = stream.toByteArray();
+        final Bitmap compressedBitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);*/
+
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -40,7 +49,7 @@ public class Util {
     public static Mat obtenerContornos(Mat matSource, Mat matDstSobreCualDibujar){
         contornos= new ArrayList<MatOfPoint>();
         Mat hierarchy = new Mat();
-        Imgproc.findContours(matSource, contornos, hierarchy,  Imgproc.RETR_EXTERNAL,Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(matSource, contornos, hierarchy,  Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE);
         //Imgproc.drawContours(dstSobreCualDibujar, contornos, -1, new Scalar(255, 0, 0), 0);
         double maxArea=0;
         maxIndex=0;
@@ -54,7 +63,8 @@ public class Util {
         }
         Mat matTmp= new Mat();
         matDstSobreCualDibujar.copyTo(matTmp);
-        Imgproc.drawContours(matTmp, contornos, -1, new Scalar(255, 0, 0), 1);
+        Imgproc.drawContours(matTmp, contornos, -1, new Scalar(0, 255, 0), 1);
+        Log.e("NUM CONTORNOS", String.valueOf(contornos.size()));
         return matTmp;
     }
 

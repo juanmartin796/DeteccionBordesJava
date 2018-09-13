@@ -26,6 +26,7 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
@@ -38,7 +39,7 @@ import java.io.OutputStreamWriter;
 public class ImageOpenCVActivity extends AppCompatActivity {
     private int RESULT_LOAD_IMG = 1;
     private String imgDecodableString;
-    private ImageView imgOriginal, imgBordes, imgContornos, imgThreshold;
+    private ImageView imgOriginal, imgBordes, imgContornos, imgThreshold, imgContraste, imgContrasteContorno, imgContrasteTheshold;
     private SeekBar seekBarThreshold1, seekBarThreshold2, seekBarThresholdProc;
     public int threshold1 = 200, threshold2 = 200, thresholdProc = 45;
     private Bitmap bitmapOriginal;
@@ -97,6 +98,7 @@ public class ImageOpenCVActivity extends AppCompatActivity {
                 textoResultados="";
                 crearBordes();
                 crearContornos();
+                //contraste();
                 tvResultados.setText(textoResultados);
                 //escribirArchivo(getApplicationContext(), "tiempo.txt", textoResultados);
             }
@@ -113,6 +115,7 @@ public class ImageOpenCVActivity extends AppCompatActivity {
                 textoResultados+="\nThreshold2: "+ threshold2;
                 crearBordes();
                 crearContornos();
+                //contraste();
                 tvResultados.setText(textoResultados);
                 //escribirArchivo(getApplicationContext(), "tiempo.txt", textoResultados);
             }
@@ -133,6 +136,7 @@ public class ImageOpenCVActivity extends AppCompatActivity {
                 textoResultados+="\nThreshold2: "+ threshold2;
                 crearBordes();
                 crearContornos();
+                //contraste();
                 tvResultados.setText(textoResultados);
                 //escribirArchivo(getApplicationContext(), "tiempo.txt", textoResultados);
             }
@@ -153,6 +157,7 @@ public class ImageOpenCVActivity extends AppCompatActivity {
                 textoResultados+="\nThreshold2: "+ threshold2;
                 crearBordes();
                 crearContornos();
+                //contraste();
                 tvResultados.setText(textoResultados);
                 //escribirArchivo(getApplicationContext(), "tiempo.txt", textoResultados);
             }
@@ -188,14 +193,15 @@ public class ImageOpenCVActivity extends AppCompatActivity {
     private void crearContornos() {
         startTime();
         Mat tmpGray = new Mat (matOriginal.width(), matOriginal.height(), CvType.CV_8UC1);
+        Mat matAllBlack = new Mat (matOriginal.height(), matOriginal.width(), CvType.CV_8UC3, new Scalar(0,0,0));
         Imgproc.cvtColor(matOriginal, tmpGray, Imgproc.COLOR_RGB2GRAY);
 
         //Imgproc.threshold(tmpGray, tmpGray, thresholdProc, 255, Imgproc.THRESH_BINARY);
         Imgproc.threshold(tmpGray, tmpGray, thresholdProc, threshold1, Imgproc.THRESH_BINARY);
-
         Util.cargarMatEnImageView(tmpGray, imgThreshold, ImageOpenCVActivity.this); //HABILITAR SI SE QUIERE VER EL FRAME COMO QUEDA
 
-        Mat matContornos = Util.obtenerContornos(tmpGray, matOriginal); //HABILITAR SI SE QUIERE OBTENER LOS CORTORNOS UTILIZANDO EL THRESHOLD
+        //Mat matContornos = Util.obtenerContornos(tmpGray, matOriginal); //HABILITAR SI SE QUIERE OBTENER LOS CORTORNOS UTILIZANDO EL THRESHOLD
+        Mat matContornos = Util.obtenerContornos(tmpGray, matAllBlack); //HABILITAR SI SE QUIERE QUE DIBUJE SOBRE UN FONDO NEGRO
         //Mat matContornos = Util.obtenerContornos(matBordes, matOriginal);
 
         endTime();
@@ -212,7 +218,6 @@ public class ImageOpenCVActivity extends AppCompatActivity {
     public void escribirArchivo(Context mcoContext,String sFileName, String sBody){
         /*String filename = sFileName;
         FileOutputStream outputStream;
-
         try {
             outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
             outputStream.write(sBody.getBytes());
